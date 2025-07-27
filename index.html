@@ -157,7 +157,7 @@
         const p = document.createElement('p');
         const headerLabel = headers[i];
         const imageLabel = headerImageMap[headerLabel]
-          ? `<img src="${headerImageMap[headerLabel]}" alt="${headerLabel}" style="height: 30px; display: inline-block; margin-top: -0.4em; vertical-align: middle;" />`
+          ? `<br/><img src="${headerImageMap[headerLabel]}" alt="${headerLabel}" style="height: 30px; display: inline-block; margin-top: -0.4em; vertical-align: middle;" />`
           : `<strong>${headerLabel}</strong>`;
         p.innerHTML = `${imageLabel} ${featuredRow[i] || ''}`;
         featuredCard.appendChild(p);
@@ -181,7 +181,7 @@
         const p = document.createElement('p');
         const headerLabel = headers[i];
         const imageLabel = headerImageMap[headerLabel]
-          ? `<img src="${headerImageMap[headerLabel]}" alt="${headerLabel}" style="height: 30px; margin-top: -0.4em; vertical-align: middle;" />`
+          ? `<br/><img src="${headerImageMap[headerLabel]}" alt="${headerLabel}" style="height: 30px; margin-top: -0.4em; vertical-align: middle;" />`
           : `<strong>${headerLabel}</strong>`;
         p.innerHTML = `${imageLabel} ${row[i] || ''}`;
         card.appendChild(p);
