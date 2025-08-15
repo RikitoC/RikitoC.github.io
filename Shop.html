@@ -218,24 +218,20 @@ hr {
 .shops-accordion {
   /* Colors tuned to your site */
   --text: #FFFFFF;                       /* primary text */
-  --muted: #ededed;       /* secondary text (matches credits) */
-  --panel: #a59983;            /* input/panel bg (from .icons.style1 a) */
-  --panel2: #867b65f5;      /* subtle section bg */
-  --border: #6b3b0ed4;      /* dividers */
+  --muted: #ededed;                      /* secondary text */
+  --panel: #a59983;                      /* input/panel bg */
+  --panel2: #867b65f5;                   /* subtle section bg */
+  --border: #6b3b0ed4;                   /* dividers */
   --accent: rgba(161,124,90,0.45);       /* focus ring using your gold (#A17C5A) */
 
-  /* Accent swatches (if you want to use them anywhere) */
-  --accent-gold: #A17C5A;                /* headings mark color on site */
-  --accent-yellow: #FFF72B;              /* highlight mark */
-  --accent-red: rgba(161,29,29,0.929);   /* heading shadow color on site */
+  --accent-gold: #A17C5A;
+  --accent-yellow: #FFF72B;
+  --accent-red: rgba(161,29,29,0.929);
 
   color: var(--text);
-  /* Typography: your site uses 'Redressed' for headings;
-     we keep it across the component for a cohesive look. */
   font-family: 'Roboto', Arial, sans-serif;
 }
 
-/* Toolbar controls keep site-like feel (dark glassy inputs) */
 .shops-accordion .toolbar {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -260,12 +256,10 @@ hr {
 }
 .shops-accordion .control input[type="search"]:focus,
 .shops-accordion .control select:focus {
-  /* warm gold focus to match site accents */
   box-shadow: 0 0 0 3px var(--accent);
   border-color: var(--accent-gold);
 }
 
-/* Container: subtle frosted look like your cards/overlays */
 .shops-accordion .accordion-root {
   border: 1px solid var(--border);
   border-radius: .8rem;
@@ -275,7 +269,6 @@ hr {
   box-shadow: 0 10px 24px rgba(0,0,0,.18);
 }
 
-/* Group headers use a gentle gradient and your accent gold on hover/focus */
 .shops-accordion .group { border-top: 1px solid var(--border); }
 .shops-accordion .group:first-child { border-top: 0; }
 .shops-accordion .group summary {
@@ -290,14 +283,13 @@ hr {
   background: linear-gradient(to bottom, rgba(255,255,255,.08), rgba(255,255,255,.04));
 }
 .shops-accordion .group summary::-webkit-details-marker { display: none; }
-/* Shop Type header text = Redressed only here */
 .shops-accordion .group summary .title {
-  font-family: 'Redressed', cursive;
+  font-family: 'Redressed', cursive; /* Redressed only for headers */
   font-weight: 600;
   letter-spacing: .2px;
   text-shadow: 0.079rem 0.17rem 0.0625rem var(--accent-red);
   font-size: 1.2rem;
-  }
+}
 .shops-accordion .group summary .count {
   font-size: .85rem;
   color: var(--muted);
@@ -308,7 +300,6 @@ hr {
   border-bottom: 1px solid var(--border);
 }
 
-/* Rows: columns Location | Shop Name | Pirate | Crew */
 .shops-accordion .rows { overflow: hidden; }
 .shops-accordion .row {
   display: grid;
@@ -327,7 +318,6 @@ hr {
 }
 .shops-accordion .row .cell.em { 
   font-weight: 600; 
-  /* subtle gold tint for key cell to echo site marks */
   color: var(--text);
 }
 .shops-accordion .row.header {
@@ -357,15 +347,13 @@ hr {
 
 /* Softer placeholder for the Quick search */
 .shops-accordion .control input[type="search"]::placeholder {
-  color: rgba(224, 224, 224, 0.45); /* dimmer than --muted */
-  opacity: 1; /* override Safari's default opacity */
+  color: rgba(224, 224, 224, 0.45);
+  opacity: 1;
 }
-/* Optional legacy prefixes (safe to include) */
 .shops-accordion .control input[type="search"]::-webkit-input-placeholder { color: #ededed; opacity:1; }
 .shops-accordion .control input[type="search"]::-moz-placeholder { color: #ededed; opacity:1; }
 .shops-accordion .control input[type="search"]:-ms-input-placeholder { color: #ededed; opacity:1; }
 .shops-accordion .control input[type="search"]::-ms-input-placeholder { color: #ededed; opacity:1; }
-
 </style>
 
 <!-- Papa Parse (CSV parser) -->
@@ -378,7 +366,7 @@ hr {
   const PROXY_URL = 'https://corsproxy.io/?' + encodeURIComponent(RAW_SHEET_CSV);
 
   // === STATE ===
-  let allRows = [];      // deduped, normalized rows
+  let allRows = [];      // deduped, normalized, OWNED-ONLY rows
   let shownRows = [];    // rows after search/filter
   let grouped = {};      // { ShopType: [rows...] }
 
@@ -386,18 +374,19 @@ hr {
   const collator = new Intl.Collator(undefined, { sensitivity: 'base', numeric: true });
 
   // --- Helpers ---
-  // Drop this in place of your current escapeHtml
-const escapeMap = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;' // <-- add apostrophe mapping
-};
-const escapeHtml = s =>
-  (s ?? '').toString().replace(/[&<>"']/g, c => escapeMap[c] || c);
+
+  // HTML escaping (fixes the apostrophe/undefined issue)
+  const escapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  const escapeHtml = s => (s ?? '').toString().replace(/[&<>"']/g, c => escapeMap[c] || c);
 
   const by = (key) => (a,b) => collator.compare((a[key]??'').toString(), (b[key]??'').toString());
+
+  // Keep only rows where Ownership Role implies "Owned"
+  function isOwned(row) {
+    const v = (row['Ownership Role'] || '').toString().toLowerCase();
+    // covers "Owns", "Owned", "Owner" variants
+    return v.includes('own');
+  }
 
   // Dedupe by Shop Name + Location + Shop Type, prefer Ownership Role = "Owns"
   function dedupeRows(rows) {
@@ -430,7 +419,6 @@ const escapeHtml = s =>
     const root = document.getElementById('accordion-root');
     const types = Object.keys(groups).sort(collator.compare);
 
-    // If no results at all after filters/search:
     if (!types.length) {
       root.innerHTML = `<div class="empty">No shops match your filters.</div>`;
       return;
@@ -440,7 +428,6 @@ const escapeHtml = s =>
       const rows = groups[type];
       const count = rows.length;
 
-      // Build rows HTML (with header row pinned per group)
       const rowsHtml = [
         `<div class="row header">
           <div class="cell">Location</div>
@@ -457,7 +444,6 @@ const escapeHtml = s =>
         </div>
       `)).join('');
 
-      // details/summary accordion
       return `
         <details class="group">
           <summary>
@@ -518,7 +504,7 @@ const escapeHtml = s =>
       transformHeader: h => (h || '').trim()
     });
 
-    // Normalize to the exact columns we rely on (no value changes)
+    // Normalize to the exact columns we rely on
     const rows = parsed.data.map(row => ({
       'Pirate Name'   : (row['Pirate Name']    ?? '').toString().trim(),
       'Crew Name'     : (row['Crew Name']      ?? '').toString().trim(),
@@ -531,24 +517,23 @@ const escapeHtml = s =>
     // Require key fields for display
     .filter(r => r['Shop Name'] && r['Location'] && r['Shop Type']);
 
-    // Dedupe (prefers "Owns" over "Manages")
-    allRows = dedupeRows(rows);
+    // Dedupe, then **OWNED ONLY**
+    const deduped = dedupeRows(rows);
+    allRows = deduped.filter(isOwned);
 
-    // Controls
+    // Controls should reflect only owned rows
     fillLocationOptions(allRows);
     document.getElementById('filter-location').addEventListener('change', applyFilters);
     document.getElementById('q').addEventListener('input', debounce(applyFilters, 150));
 
-    // Initial render
+    // Initial render (all groups closed by default)
     applyFilters();
-
-    // Optionally, open the first group if you like:
-    const first = document.querySelector('.group');
-    if (first) first.setAttribute('open', '');
+    // (Removed: auto-opening the first group)
   }
 
   init();
 </script>
+
 
 
   <script>
