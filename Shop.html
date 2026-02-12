@@ -363,7 +363,7 @@ hr {
   // === CONFIG: point to your published CSV URL ===
   const RAW_SHEET_CSV =
     'https://docs.google.com/spreadsheets/d/e/2PACX-1vSPNC1s85Da55UHTTF1BW2iUqKfWeNP0I2JgRpAnyrjeSjAOU3stT-y5aBVQcj3vO0tgT6ZiQ7Fp7qe/pub?gid=0&single=true&output=csv';
-  const PROXY_URL = 'https://corsproxy.io/?' + encodeURIComponent(RAW_SHEET_CSV);
+  const PROXY_URL = 'https://corsproxy.io/?key=25a8676e&url=' + encodeURIComponent(RAW_SHEET_CSV);
 
   // === STATE ===
   let allRows = [];      // deduped, normalized, OWNED-ONLY rows
