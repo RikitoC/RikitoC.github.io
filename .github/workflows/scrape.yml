@@ -31,7 +31,7 @@ jobs:
           OUTPUT_DIR: data
           META_PATH: data/meta.json
         run: |
-          python scraper/pipeline.py
+          python -m scraper.pipeline
 
       - name: Commit and push if changed
         run: |
