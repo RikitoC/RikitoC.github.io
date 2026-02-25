@@ -1,0 +1,49 @@
+name: Scrape + publish CSVs
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 17 * * *"   # 10:00 AM Arizona (UTC-7)
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scraper/requirements.txt
+
+      - name: Run scraper pipeline
+        env:
+          OUTPUT_DIR: data
+          META_PATH: data/meta.json
+        run: |
+          python scraper/pipeline.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add data
+
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+
+          git commit -m "Update CSV datasets (auto)"
+          git push
