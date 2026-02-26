@@ -262,17 +262,17 @@ const lordsLadies = royalData
     // Render Royals
     document.getElementById('kings-queens').innerHTML =
       kingsQueens.map(row =>
-        renderCard(row['Flag Rank'], row['Pirate Name'])
+        renderCard(row['Flag Role'], row['Pirate Name'])
       ).join('');
 
     document.getElementById('princes-princesses').innerHTML =
       princesPrincesses.map(row =>
-        renderCard(row['Flag Rank'], row['Pirate Name'])
+        renderCard(row['Flag Role'], row['Pirate Name'])
       ).join('');
 
     document.getElementById('lords-ladies').innerHTML =
       lordsLadies.map(row =>
-        renderCard(row['Flag Rank'], row['Pirate Name'])
+        renderCard(row['Flag Role'], row['Pirate Name'])
       ).join('');
 
   } catch (err) {
