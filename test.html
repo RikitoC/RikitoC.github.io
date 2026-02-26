@@ -177,7 +177,7 @@ const ROYALS_CSV_URL = '/data/royals.csv';
 const priorityCrews = [
   'Djinn N Tonic',
   'League of Shadows',
-  'New Frigs on the Block'
+  'New Frigs On The Block'
 ];
 
 async function loadData() {
@@ -210,7 +210,7 @@ async function loadData() {
       .filter(row => row['Crew Name'])
       .map(row => ({
         ...row,
-        Captain: row['Captain']?.trim() || 'No Captain Listed'
+        Captain: row['Captain']?.trim() || ''
       }));
 
     // Priority crews in exact defined order
