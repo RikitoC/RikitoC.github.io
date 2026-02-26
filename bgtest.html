@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tiled BG + SVG Overlay</title>
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+  background-image:
+    url("map.svg"),      /* top layer */
+    url("bg-parch.png");      /* bottom tiled image */
+
+  background-repeat:
+    no-repeat,
+    repeat;
+
+  background-size:
+    cover,      /* overlay fills screen */
+    auto;       /* tile keeps natural size */
+
+  background-position:
+    center,
+    top left;
+
+  background-attachment:
+    fixed,
+    fixed;
+}
+
+    /* Page content sits above background + below overlay */
+    .page {
+      position: relative;
+      min-height: 100vh;
+      z-index: 1;
+    }
+
+    /* SVG OVERLAY LAYER */
+    .svg-overlay {
+      position: fixed;
+      inset: 0;              /* top:0; right:0; bottom:0; left:0 */
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;  /* overlay won't block clicks */
+      opacity: 0.25;         /* adjust overlay strength */
+      mix-blend-mode: multiply; /* optional: nice texture blending */
+    }
+
+    /* Optional: if you want the overlay to scroll with content instead */
+    /* .svg-overlay { position: absolute; } */
+  </style>
+</head>
+<body>
+  <!-- SVG overlay (inline) -->
+
+
+      <!-- Optional: soft vignette -->
+      <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+        <stop offset="60%" stop-color="black" stop-opacity="0"/>
+        <stop offset="100%" stop-color="black" stop-opacity="0.5"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Hatch overlay -->
+    <rect x="0" y="0" width="100" height="100" fill="url(#hatch)"/>
+
+    <!-- Vignette overlay (optional) -->
+    <rect x="0" y="0" width="100" height="100" fill="url(#vignette)" opacity="0.4"/>
+  </svg>
+
+  <main class="page">
+    <h1 style="padding:24px; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.6);">
+      Content goes here
+    </h1>
+  </main>
+</body>
+</html>
