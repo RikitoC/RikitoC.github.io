@@ -226,21 +226,25 @@ async function loadData() {
     const crewSorted = [...priority, ...others];
 
     // Royal Data
-    const royalData = royalsParsed.data.filter(row =>
-      row['Flag Role'] && row['Pirate Name']
-    );
+const royalData = royalsParsed.data
+  .filter(row => row['Flag Role'] && row['Pirate Name'])
+  .map(row => ({
+    ...row,
+    FlagRoleClean: row['Flag Role'].trim().toLowerCase(),
+    PirateNameClean: row['Pirate Name'].trim()
+  }));
 
-    const kingsQueens = royalData
-      .filter(d => ['King', 'Queen'].includes(d['Flag Rank']))
-      .sort((a, b) => a['Pirate Name'].localeCompare(b['Pirate Name']));
+const kingsQueens = royalData
+  .filter(d => ['king', 'queen'].includes(d.FlagRoleClean))
+  .sort((a, b) => a.PirateNameClean.localeCompare(b.PirateNameClean));
 
-    const princesPrincesses = royalData
-      .filter(d => ['Prince', 'Princess'].includes(d['Flag Rank']))
-      .sort((a, b) => a['Pirate Name'].localeCompare(b['Pirate Name']));
+const princesPrincesses = royalData
+  .filter(d => ['prince', 'princess'].includes(d.FlagRoleClean))
+  .sort((a, b) => a.PirateNameClean.localeCompare(b.PirateNameClean));
 
-    const lordsLadies = royalData
-      .filter(d => ['Lord', 'Lady'].includes(d['Flag Rank']))
-      .sort((a, b) => a['Pirate Name'].localeCompare(b['Pirate Name']));
+const lordsLadies = royalData
+  .filter(d => ['lord', 'lady'].includes(d.FlagRoleClean))
+  .sort((a, b) => a.PirateNameClean.localeCompare(b.PirateNameClean));
 
     const renderCard = (title, subtitle) => `
       <div class="card">
