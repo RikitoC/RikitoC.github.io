@@ -218,10 +218,10 @@ async function loadData() {
       .map(name => crewData.find(c => c['Crew Name'] === name))
       .filter(Boolean);
 
-    // All other crews sorted alphabetically
-    const others = crewData
-      .filter(c => !priorityCrews.includes(c['Crew Name']))
-      .sort((a, b) => a['Crew Name'].localeCompare(b['Crew Name']));
+    // All other crews sorted by membership
+    const others = crewData.filter(
+      c => !priorityCrews.includes(c['Crew Name'])
+    );
 
     const crewSorted = [...priority, ...others];
 
