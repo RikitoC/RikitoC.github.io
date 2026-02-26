@@ -173,11 +173,18 @@ hr {
 const CREW_CSV_URL   = '/data/crew_details.csv';
 const ROYALS_CSV_URL = '/data/royals.csv';
 
+// 👇 Top 3 crews in exact display order
+const priorityCrews = [
+  'Djinn N Tonic',
+  'League of Shadows',
+  'New Frigs on the Block'
+];
+
 async function loadData() {
   try {
     const [crewResponse, royalsResponse] = await Promise.all([
-      fetch(CREW_CSV_URL),
-      fetch(ROYALS_CSV_URL)
+      fetch(CREW_CSV_URL + '?v=' + Date.now()),
+      fetch(ROYALS_CSV_URL + '?v=' + Date.now())
     ]);
 
     if (!crewResponse.ok) throw new Error("Crew CSV failed to load");
@@ -198,20 +205,31 @@ async function loadData() {
       transformHeader: h => h.trim()
     });
 
-    const crewData = crewParsed.data.filter(row =>
-      row['Crew Name'] && row['Captain']
-    );
+    // Crew Data (Captain optional)
+    const crewData = crewParsed.data
+      .filter(row => row['Crew Name'])
+      .map(row => ({
+        ...row,
+        Captain: row['Captain']?.trim() || 'No Captain Listed'
+      }));
 
+    // Priority crews in exact defined order
+    const priority = priorityCrews
+      .map(name => crewData.find(c => c['Crew Name'] === name))
+      .filter(Boolean);
+
+    // All other crews sorted alphabetically
+    const others = crewData
+      .filter(c => !priorityCrews.includes(c['Crew Name']))
+      .sort((a, b) => a['Crew Name'].localeCompare(b['Crew Name']));
+
+    const crewSorted = [...priority, ...others];
+
+    // Royal Data
     const royalData = royalsParsed.data.filter(row =>
       row['Flag Rank'] && row['Pirate Name']
     );
 
-    // Keep Djinn N Tonic first
-    const djinnCrew = crewData.filter(d => d['Crew Name'] === 'Djinn N Tonic');
-    const otherCrew = crewData.filter(d => d['Crew Name'] !== 'Djinn N Tonic');
-    const crewSorted = [...djinnCrew, ...otherCrew];
-
-    // Royal group sorting
     const kingsQueens = royalData
       .filter(d => ['King', 'Queen'].includes(d['Flag Rank']))
       .sort((a, b) => a['Pirate Name'].localeCompare(b['Pirate Name']));
