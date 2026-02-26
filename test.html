@@ -170,36 +170,58 @@ hr {
   <div id="lords-ladies" class="card-container"></div>
 
 <script>
-  const RAW_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRDQxEOdu2kY_BmhCl7p9NRBxCeNxFhK5_j_2AJIMy8bQfK8MMu6A2SDoi9ZVaP4EdAi5IwIEG8sOxv/pub?gid=1432708240&single=true&output=csv';
-  const PROXY_URL = 'https://corsproxy.io/?key=25a8676e&url=' + encodeURIComponent(RAW_SHEET_CSV);
+const CREW_CSV_URL   = '/data/crew_details.csv';
+const ROYALS_CSV_URL = '/data/royals.csv';
 
-  async function loadData() {
-    const response = await fetch(PROXY_URL);
-    const csvText = await response.text();
+async function loadData() {
+  try {
+    const [crewResponse, royalsResponse] = await Promise.all([
+      fetch(CREW_CSV_URL),
+      fetch(ROYALS_CSV_URL)
+    ]);
 
-    const parsed = Papa.parse(csvText, {
+    if (!crewResponse.ok) throw new Error("Crew CSV failed to load");
+    if (!royalsResponse.ok) throw new Error("Royals CSV failed to load");
+
+    const crewText   = await crewResponse.text();
+    const royalsText = await royalsResponse.text();
+
+    const crewParsed = Papa.parse(crewText, {
       header: true,
       skipEmptyLines: true,
-      transformHeader: header => header.trim()
+      transformHeader: h => h.trim()
     });
 
-    const data = parsed.data.filter(row => {
-      const { Identifier, ...rest } = row;
-      return Identifier && Object.values(rest).some(val => val.trim() !== '');
+    const royalsParsed = Papa.parse(royalsText, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: h => h.trim()
     });
 
-    const crewData = data.filter(d => d['Identifier'] === 'Crew');
-    const royalData = data.filter(d => d['Identifier'] === 'Royal');
+    const crewData = crewParsed.data.filter(row =>
+      row['Crew Name'] && row['Captain']
+    );
 
+    const royalData = royalsParsed.data.filter(row =>
+      row['Flag Rank'] && row['Pirate Name']
+    );
+
+    // Keep Djinn N Tonic first
     const djinnCrew = crewData.filter(d => d['Crew Name'] === 'Djinn N Tonic');
     const otherCrew = crewData.filter(d => d['Crew Name'] !== 'Djinn N Tonic');
     const crewSorted = [...djinnCrew, ...otherCrew];
 
-    const kingsQueens = royalData.filter(d => ['King', 'Queen'].includes(d['Flag Rank']))
+    // Royal group sorting
+    const kingsQueens = royalData
+      .filter(d => ['King', 'Queen'].includes(d['Flag Rank']))
       .sort((a, b) => a['Pirate Name'].localeCompare(b['Pirate Name']));
-    const princesPrincesses = royalData.filter(d => ['Prince', 'Princess'].includes(d['Flag Rank']))
+
+    const princesPrincesses = royalData
+      .filter(d => ['Prince', 'Princess'].includes(d['Flag Rank']))
       .sort((a, b) => a['Pirate Name'].localeCompare(b['Pirate Name']));
-    const lordsLadies = royalData.filter(d => ['Lord', 'Lady'].includes(d['Flag Rank']))
+
+    const lordsLadies = royalData
+      .filter(d => ['Lord', 'Lady'].includes(d['Flag Rank']))
       .sort((a, b) => a['Pirate Name'].localeCompare(b['Pirate Name']));
 
     const renderCard = (title, subtitle) => `
@@ -209,24 +231,34 @@ hr {
       </div>
     `;
 
-    document.getElementById('crew-section').innerHTML = crewSorted.map(row =>
-      renderCard(row['Crew Name'], row['Captain'])
-    ).join('');
+    // Render Crew
+    document.getElementById('crew-section').innerHTML =
+      crewSorted.map(row =>
+        renderCard(row['Crew Name'], row['Captain'])
+      ).join('');
 
-    document.getElementById('kings-queens').innerHTML = kingsQueens.map(row =>
-      renderCard(row['Flag Rank'], row['Pirate Name'])
-    ).join('');
+    // Render Royals
+    document.getElementById('kings-queens').innerHTML =
+      kingsQueens.map(row =>
+        renderCard(row['Flag Rank'], row['Pirate Name'])
+      ).join('');
 
-    document.getElementById('princes-princesses').innerHTML = princesPrincesses.map(row =>
-      renderCard(row['Flag Rank'], row['Pirate Name'])
-    ).join('');
+    document.getElementById('princes-princesses').innerHTML =
+      princesPrincesses.map(row =>
+        renderCard(row['Flag Rank'], row['Pirate Name'])
+      ).join('');
 
-    document.getElementById('lords-ladies').innerHTML = lordsLadies.map(row =>
-      renderCard(row['Flag Rank'], row['Pirate Name'])
-    ).join('');
+    document.getElementById('lords-ladies').innerHTML =
+      lordsLadies.map(row =>
+        renderCard(row['Flag Rank'], row['Pirate Name'])
+      ).join('');
+
+  } catch (err) {
+    console.error("Error loading CSV data:", err);
   }
+}
 
-  loadData();
+loadData();
 </script>
 
   <script>
