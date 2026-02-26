@@ -176,6 +176,51 @@ code {
     padding: var(--padding-vertical) var(--padding-horizontal);
 }
 
+#container03 {
+  background-image:
+    url("data:image/svg+xml;charset=utf8,
+      %3Csvg viewBox='0 0 512 512'
+        width='512'
+        height='512'
+        version='1.1'
+        xmlns='http://www.w3.org/2000/svg'%3E
+        %3Cfilter id='noise'%3E
+          %3CfeTurbulence
+            type='fractalNoise'
+            baseFrequency='0.875'
+            result='noise'
+          /%3E
+          %3CfeColorMatrix
+            type='matrix'
+            values='0 0 0 0 0
+                    0 0 0 0 0
+                    0 0 0 0 0
+                    0 0 0 0.16796875 0'
+          /%3E
+        %3C/filter%3E
+        %3Crect
+          filter='url(%23noise)'
+          x='0'
+          y='0'
+          width='512'
+          height='512'
+          fill='transparent'
+          opacity='1'
+        /%3E
+      %3C/svg%3E"
+    ),
+    linear-gradient(
+      180deg,
+      rgba(130, 130, 130, 0.231) 7%,
+      rgba(18, 18, 18, 0.812) 100%
+    ),
+    url("assets/images/container03.jpg?v=69b1f769");
+
+  background-size: 512px, cover, cover;
+  background-position: center, 0% 0%, 50% 50%;
+  background-repeat: repeat, repeat, no-repeat;
+}
+
 /* ============================= */
 /* ICONS                         */
 /* ============================= */
