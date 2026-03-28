@@ -474,7 +474,6 @@ function renderAccordion(groups) {
         <div class="cell">Shop Name</div>
         <div class="cell pirate">Pirate</div>
         <div class="cell crew">Crew</div>
-        <div class="cell role">Role</div>
       </div>`
     ].concat(rows.map(r => `
       <div class="row">
@@ -482,7 +481,6 @@ function renderAccordion(groups) {
         <div class="cell em">${escapeHtml(r['Shop Name'])}</div>
         <div class="cell pirate">${escapeHtml(r['Pirate Name'])}</div>
         <div class="cell crew">${escapeHtml(r['Crew Name'])}</div>
-        <div class="cell role">${escapeHtml(r['Ownership Role'])}</div>
       </div>
     `)).join('');
 
