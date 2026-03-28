@@ -493,7 +493,7 @@ hr {
   async function init() {
     if (typeof Papa === 'undefined') await new Promise(r => setTimeout(r, 0));
 
-    const res = await fetch(PROXY_URL);
+    const res = await fetch(RAW_SHEET_CSV);
     const csvText = await res.text();
 
     const parsed = Papa.parse(csvText, {
