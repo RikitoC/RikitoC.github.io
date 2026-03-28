@@ -361,175 +361,220 @@ hr {
 
 <script>
   // === CONFIG: point to your published CSV URL ===
-  const RAW_SHEET_CSV = '/data/shoppes.csv';
-  
-  // === STATE ===
-  let allRows = [];      // deduped, normalized, OWNED-ONLY rows
-  let shownRows = [];    // rows after search/filter
-  let grouped = {};      // { ShopType: [rows...] }
+const RAW_SHEET_CSV = '/data/shoppes.csv';
 
-  // Collation for nice sorting
-  const collator = new Intl.Collator(undefined, { sensitivity: 'base', numeric: true });
+// === STATE ===
+let allRows = [];      // deduped, normalized, visible rows
+let shownRows = [];    // rows after search/filter
+let grouped = {};      // { ShopType: [rows...] }
 
-  // --- Helpers ---
+// Collation for nice sorting
+const collator = new Intl.Collator(undefined, { sensitivity: 'base', numeric: true });
 
-  // HTML escaping (fixes the apostrophe/undefined issue)
-  const escapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-  const escapeHtml = s => (s ?? '').toString().replace(/[&<>"']/g, c => escapeMap[c] || c);
+// --- Helpers ---
 
-  const by = (key) => (a,b) => collator.compare((a[key]??'').toString(), (b[key]??'').toString());
+// HTML escaping
+const escapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const escapeHtml = s => (s ?? '').toString().replace(/[&<>"']/g, c => escapeMap[c] || c);
 
-  // Keep only rows where Ownership Role implies "Owned"
-  function isOwned(row) {
-    const v = (row['Ownership Role'] || '').toString().toLowerCase();
-    // covers "Owns", "Owned", "Owner" variants
-    return v.includes('own');
+const by = (key) => (a, b) => collator.compare((a[key] ?? '').toString(), (b[key] ?? '').toString());
+
+function normalizeRole(value) {
+  const v = (value || '').toString().trim().toLowerCase();
+  if (v.includes('own')) return 'owns';
+  if (v.includes('manag')) return 'manages';
+  return '';
+}
+
+function shopKey(row) {
+  return [
+    (row['Shop Name'] || '').trim().toLowerCase(),
+    (row['Location'] || '').trim().toLowerCase(),
+    (row['Shop Type'] || '').trim().toLowerCase()
+  ].join('||');
+}
+
+// Keep one owned row if ownership exists for that shop.
+// Otherwise keep manager rows for that shop.
+function resolveDisplayRows(rows) {
+  const groups = new Map();
+
+  for (const r of rows) {
+    const key = shopKey(r);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(r);
   }
 
-  // Dedupe by Shop Name + Location + Shop Type, prefer Ownership Role = "Owns"
-  function dedupeRows(rows) {
-    const map = new Map();
-    for (const r of rows) {
-      const key = `${r['Shop Name']}||${r['Location']}||${r['Shop Type']}`;
-      const prev = map.get(key);
-      if (!prev) { map.set(key, r); continue; }
-      const prevOwns = (prev['Ownership Role']||'').toLowerCase() === 'owns';
-      const curOwns  = (r['Ownership Role']  ||'').toLowerCase() === 'owns';
-      if (!prevOwns && curOwns) map.set(key, r);
+  const result = [];
+
+  for (const groupRows of groups.values()) {
+    const ownedRows = groupRows.filter(r => normalizeRole(r['Ownership Role']) === 'owns');
+    const managedRows = groupRows.filter(r => normalizeRole(r['Ownership Role']) === 'manages');
+
+    if (ownedRows.length) {
+      // If there are multiple owned rows for the same shop, keep one stable winner.
+      ownedRows.sort((a, b) =>
+        by('Location')(a, b) ||
+        by('Shop Name')(a, b) ||
+        by('Pirate Name')(a, b) ||
+        by('Crew Name')(a, b)
+      );
+      result.push(ownedRows[0]);
+    } else if (managedRows.length) {
+      // No owner known, so keep the managed rows.
+      // Usually this will be one row, but this preserves the source data.
+      managedRows.sort((a, b) =>
+        by('Location')(a, b) ||
+        by('Shop Name')(a, b) ||
+        by('Pirate Name')(a, b) ||
+        by('Crew Name')(a, b)
+      );
+      result.push(...managedRows);
     }
-    return Array.from(map.values());
   }
 
-  function groupByShopType(rows) {
-    const out = {};
-    for (const r of rows) {
-      const t = r['Shop Type'] || '';
-      (out[t] ||= []).push(r);
-    }
-    // Sort rows within each group by Location then Shop Name
-    for (const t in out) {
-      out[t].sort((a,b) => by('Location')(a,b) || by('Shop Name')(a,b));
-    }
-    return out;
+  return result;
+}
+
+function groupByShopType(rows) {
+  const out = {};
+  for (const r of rows) {
+    const t = r['Shop Type'] || '';
+    (out[t] ||= []).push(r);
   }
 
-  function renderAccordion(groups) {
-    const root = document.getElementById('accordion-root');
-    const types = Object.keys(groups).sort(collator.compare);
-
-    if (!types.length) {
-      root.innerHTML = `<div class="empty">No shops match your filters.</div>`;
-      return;
-    }
-
-    root.innerHTML = types.map(type => {
-      const rows = groups[type];
-      const count = rows.length;
-
-      const rowsHtml = [
-        `<div class="row header">
-          <div class="cell">Location</div>
-          <div class="cell">Shop Name</div>
-          <div class="cell pirate">Pirate</div>
-          <div class="cell crew">Crew</div>
-        </div>`
-      ].concat(rows.map(r => `
-        <div class="row">
-          <div class="cell">${escapeHtml(r['Location'])}</div>
-          <div class="cell em">${escapeHtml(r['Shop Name'])}</div>
-          <div class="cell pirate">${escapeHtml(r['Pirate Name'])}</div>
-          <div class="cell crew">${escapeHtml(r['Crew Name'])}</div>
-        </div>
-      `)).join('');
-
-      return `
-        <details class="group">
-          <summary>
-            <span class="title">${escapeHtml(type || 'Uncategorized')}</span>
-            <span class="count">${count} shop${count !== 1 ? 's' : ''}</span>
-          </summary>
-          <div class="rows">${rowsHtml}</div>
-        </details>
-      `;
-    }).join('');
+  // Sort rows within each group by Location then Shop Name
+  for (const t in out) {
+    out[t].sort((a, b) =>
+      by('Location')(a, b) ||
+      by('Shop Name')(a, b) ||
+      by('Pirate Name')(a, b)
+    );
   }
 
-  function applyFilters() {
-    const q = document.getElementById('q').value.trim().toLowerCase();
-    const locVal = document.getElementById('filter-location').value;
+  return out;
+}
 
-    // Text search across several fields
-    shownRows = allRows.filter(r => {
-      const passLoc = locVal ? r['Location'] === locVal : true;
-      if (!passLoc) return false;
-      if (!q) return true;
-      const hay = [
-        r['Shop Name'], r['Pirate Name'], r['Crew Name'],
-        r['Location'], r['Shop Type']
-      ].join(' ').toLowerCase();
-      return hay.includes(q);
-    });
+function renderAccordion(groups) {
+  const root = document.getElementById('accordion-root');
+  const types = Object.keys(groups).sort(collator.compare);
 
-    grouped = groupByShopType(shownRows);
-    renderAccordion(grouped);
+  if (!types.length) {
+    root.innerHTML = `<div class="empty">No shops match your filters.</div>`;
+    return;
   }
 
-  function fillLocationOptions(rows) {
-    const select = document.getElementById('filter-location');
-    const vals = Array.from(new Set(rows.map(r => r['Location']).filter(Boolean))).sort(collator.compare);
-    select.innerHTML = ['<option value="">All locations</option>']
-      .concat(vals.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`))
-      .join('');
-  }
+  root.innerHTML = types.map(type => {
+    const rows = groups[type];
+    const count = rows.length;
 
-  function debounce(fn, ms = 200) {
-    let t;
-    return (...args) => {
-      clearTimeout(t);
-      t = setTimeout(() => fn(...args), ms);
-    };
-  }
+    const rowsHtml = [
+      `<div class="row header">
+        <div class="cell">Location</div>
+        <div class="cell">Shop Name</div>
+        <div class="cell pirate">Pirate</div>
+        <div class="cell crew">Crew</div>
+        <div class="cell role">Role</div>
+      </div>`
+    ].concat(rows.map(r => `
+      <div class="row">
+        <div class="cell">${escapeHtml(r['Location'])}</div>
+        <div class="cell em">${escapeHtml(r['Shop Name'])}</div>
+        <div class="cell pirate">${escapeHtml(r['Pirate Name'])}</div>
+        <div class="cell crew">${escapeHtml(r['Crew Name'])}</div>
+        <div class="cell role">${escapeHtml(r['Ownership Role'])}</div>
+      </div>
+    `)).join('');
 
-  async function init() {
-    if (typeof Papa === 'undefined') await new Promise(r => setTimeout(r, 0));
+    return `
+      <details class="group">
+        <summary>
+          <span class="title">${escapeHtml(type || 'Uncategorized')}</span>
+          <span class="count">${count} shop${count !== 1 ? 's' : ''}</span>
+        </summary>
+        <div class="rows">${rowsHtml}</div>
+      </details>
+    `;
+  }).join('');
+}
 
-    const res = await fetch(RAW_SHEET_CSV);
-    const csvText = await res.text();
+function applyFilters() {
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const locVal = document.getElementById('filter-location').value;
 
-    const parsed = Papa.parse(csvText, {
-      header: true,
-      skipEmptyLines: true,
-      transformHeader: h => (h || '').trim()
-    });
+  shownRows = allRows.filter(r => {
+    const passLoc = locVal ? r['Location'] === locVal : true;
+    if (!passLoc) return false;
 
-    // Normalize to the exact columns we rely on
-    const rows = parsed.data.map(row => ({
-      'Pirate Name'   : (row['Pirate Name']    ?? '').toString().trim(),
-      'Crew Name'     : (row['Crew Name']      ?? '').toString().trim(),
-      'Shop Type'     : (row['Shop Type']      ?? '').toString().trim(),
-      'Shop size'     : (row['Shop size']      ?? '').toString().trim(),
-      'Shop Name'     : (row['Shop Name']      ?? '').toString().trim(),
-      'Location'      : (row['Location']       ?? '').toString().trim(),
-      'Ownership Role': (row['Ownership Role'] ?? '').toString().trim()
-    }))
-    // Require key fields for display
-    .filter(r => r['Shop Name'] && r['Location'] && r['Shop Type']);
+    if (!q) return true;
 
-    // Dedupe, then **OWNED ONLY**
-    const deduped = dedupeRows(rows);
-    allRows = deduped.filter(isOwned);
+    const hay = [
+      r['Shop Name'],
+      r['Pirate Name'],
+      r['Crew Name'],
+      r['Location'],
+      r['Shop Type'],
+      r['Ownership Role']
+    ].join(' ').toLowerCase();
 
-    // Controls should reflect only owned rows
-    fillLocationOptions(allRows);
-    document.getElementById('filter-location').addEventListener('change', applyFilters);
-    document.getElementById('q').addEventListener('input', debounce(applyFilters, 150));
+    return hay.includes(q);
+  });
 
-    // Initial render (all groups closed by default)
-    applyFilters();
-    // (Removed: auto-opening the first group)
-  }
+  grouped = groupByShopType(shownRows);
+  renderAccordion(grouped);
+}
 
-  init();
+function fillLocationOptions(rows) {
+  const select = document.getElementById('filter-location');
+  const vals = Array.from(new Set(rows.map(r => r['Location']).filter(Boolean))).sort(collator.compare);
+  select.innerHTML = ['<option value="">All locations</option>']
+    .concat(vals.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`))
+    .join('');
+}
+
+function debounce(fn, ms = 200) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), ms);
+  };
+}
+
+async function init() {
+  if (typeof Papa === 'undefined') await new Promise(r => setTimeout(r, 0));
+
+  const res = await fetch(RAW_SHEET_CSV);
+  const csvText = await res.text();
+
+  const parsed = Papa.parse(csvText, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: h => (h || '').trim()
+  });
+
+  const rows = parsed.data.map(row => ({
+    'Pirate Name': (row['Pirate Name'] ?? '').toString().trim(),
+    'Crew Name': (row['Crew Name'] ?? '').toString().trim(),
+    'Shop Type': (row['Shop Type'] ?? '').toString().trim(),
+    'Shop size': (row['Shop size'] ?? '').toString().trim(),
+    'Shop Name': (row['Shop Name'] ?? '').toString().trim(),
+    'Location': (row['Location'] ?? '').toString().trim(),
+    'Ownership Role': (row['Ownership Role'] ?? '').toString().trim()
+  }))
+  .filter(r => r['Shop Name'] && r['Location'] && r['Shop Type']);
+
+  // Keep owners when known; otherwise keep managers
+  allRows = resolveDisplayRows(rows);
+
+  fillLocationOptions(allRows);
+  document.getElementById('filter-location').addEventListener('change', applyFilters);
+  document.getElementById('q').addEventListener('input', debounce(applyFilters, 150));
+
+  applyFilters();
+}
+
+init();
+init();
 </script>
 
 
