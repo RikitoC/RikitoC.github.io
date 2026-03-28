@@ -29,12 +29,13 @@ SHOP_TYPE_CANON = {
 # icon: /yoweb/images/shop-<slug>.png  OR  /yoweb/images/shop-managed-<slug>.png
 TYPE_AND_ROLE_RE = re.compile(r"/yoweb/images/shop(-managed)?-([a-z\-]+)\.png", re.I)
 
-# finds each "Name on Location" pair; handles commas between pairs
-NAME_LOC_PAIRS_RE = re.compile(r"\s*(?P<name>.+?)\s+on\s+(?P<loc>[^,]+?)(?=,|$)", re.I)
+# matches a single "Name on Location" chunk
+NAME_LOC_RE = re.compile(r"^(?P<name>.+?)\s+on\s+(?P<loc>.+)$", re.I)
 
 
 def _clean(s: str) -> str:
     return re.sub(r"\s+", " ", s or "").strip()
+
 
 def _humanize_slug(slug: str) -> str:
     if not slug:
@@ -42,6 +43,7 @@ def _humanize_slug(slug: str) -> str:
     label = slug.replace("-", " ").strip().title()
     label = label.replace("Ironmonger", "Iron Monger")
     return label
+
 
 def _parse_icon_src(src: str) -> Tuple[str, str]:
     """
@@ -57,20 +59,86 @@ def _parse_icon_src(src: str) -> Tuple[str, str]:
     role = "Manages" if is_managed else "Owns"
     return label, role
 
-def _extract_name_loc_pairs(text: str) -> List[Tuple[str, str]]:
+
+def _split_shop_chunks(text: str) -> List[str]:
+    """
+    Split a string like:
+      'Shop A on Island A, Shop B on Island B'
+    into individual shop chunks.
+
+    Only splits on commas that appear to start another full
+    '[shop name] on [location]' segment, which makes it safer
+    for shop names that may contain commas.
+    """
     txt = _clean(text)
     txt = re.sub(r"^(Owns:|Manages:)\s*", "", txt, flags=re.I)
+
+    if not txt:
+        return []
+
+    chunks: List[str] = []
+    start = 0
+
+    # Find commas that are followed by another "... on ..." pattern
+    for m in re.finditer(r",\s*(?=.+?\s+on\s+)", txt, flags=re.I):
+        candidate = txt[start:m.start()].strip()
+        remainder = txt[m.end():].strip()
+
+        # Only split here if both sides look like valid shop chunks
+        if NAME_LOC_RE.search(candidate) and NAME_LOC_RE.search(remainder):
+            chunks.append(candidate)
+            start = m.end()
+
+    final_chunk = txt[start:].strip()
+    if final_chunk:
+        chunks.append(final_chunk)
+
+    return chunks
+
+
+def _extract_name_loc_pairs(text: str) -> List[Tuple[str, str]]:
     pairs: List[Tuple[str, str]] = []
-    for m in NAME_LOC_PAIRS_RE.finditer(txt):
+
+    for chunk in _split_shop_chunks(text):
+        m = NAME_LOC_RE.match(chunk)
+        if not m:
+            continue
+
         name = _clean(m.group("name"))
         loc = _clean(m.group("loc"))
-        if not loc:
-            loc = "Error"
         pairs.append((name, loc))
+
     return pairs
 
 
-def extract_shop_rows(soup: BeautifulSoup, pirate_name: str, crew_name: str) -> List[Dict[str, str]]:
+def _build_display_shop(shop_name: str, location: str) -> str:
+    shop_name = _clean(shop_name)
+    location = _clean(location)
+
+    if shop_name and location:
+        return f"{shop_name} on {location}"
+    if shop_name:
+        return shop_name
+    if location:
+        return f"Unknown Shop on {location}"
+    return ""
+
+
+def _make_shop_key(shop_type: str, shop_size: str, shop_name: str, location: str) -> str:
+    return " | ".join([
+        _clean(shop_type).lower(),
+        _clean(shop_size).lower(),
+        _clean(shop_name).lower(),
+        _clean(location).lower(),
+    ])
+
+
+def extract_shop_rows(
+    soup: BeautifulSoup,
+    pirate_name: str,
+    crew_name: str,
+    source_url: str,
+) -> List[Dict[str, str]]:
     rows: List[Dict[str, str]] = []
     left_col = soup.find("td", attrs={"width": "190"})
     if not left_col:
@@ -94,8 +162,10 @@ def extract_shop_rows(soup: BeautifulSoup, pirate_name: str, crew_name: str) -> 
         txt = _clean(text_cell.get_text(" ", strip=True))
 
         pairs = _extract_name_loc_pairs(txt)
+        parse_status = "ok"
         if not pairs:
-            pairs = [("", "Error")]
+            pairs = [("", "")]
+            parse_status = "failed"
 
         for shop_name, location in pairs:
             rows.append({
@@ -105,7 +175,11 @@ def extract_shop_rows(soup: BeautifulSoup, pirate_name: str, crew_name: str) -> 
                 "Shop size": "Shoppe",
                 "Shop Name": shop_name,
                 "Location": location,
-                "Ownership Role": role
+                "Display Shop": _build_display_shop(shop_name, location),
+                "Ownership Role": role,
+                "Parse Status": parse_status,
+                "Source URL": source_url,
+                "Shop Key": _make_shop_key(shop_type, "Shoppe", shop_name, location),
             })
 
     # 2) Stalls (icons inside the Stalls block; each icon = one stall)
@@ -122,13 +196,15 @@ def extract_shop_rows(soup: BeautifulSoup, pirate_name: str, crew_name: str) -> 
                 title = icon.get("title") or icon.get("alt") or ""
                 title_clean = _clean(title)
 
+                parse_status = "ok"
                 m = re.search(r"^(?P<name>.+?)\s+on\s+(?P<loc>.+)$", title_clean, flags=re.I)
                 if m:
                     shop_name = _clean(m.group("name"))
                     location = _clean(m.group("loc"))
                 else:
                     shop_name = ""
-                    location = "Error"
+                    location = ""
+                    parse_status = "failed"
 
                 rows.append({
                     "Pirate Name": pirate_name,
@@ -137,7 +213,11 @@ def extract_shop_rows(soup: BeautifulSoup, pirate_name: str, crew_name: str) -> 
                     "Shop size": "Stall",
                     "Shop Name": shop_name,
                     "Location": location,
-                    "Ownership Role": role
+                    "Display Shop": _build_display_shop(shop_name, location),
+                    "Ownership Role": role,
+                    "Parse Status": parse_status,
+                    "Source URL": source_url,
+                    "Shop Key": _make_shop_key(shop_type, "Stall", shop_name, location),
                 })
 
     return rows
@@ -166,7 +246,7 @@ def _scrape_one(url: str, session: requests.Session) -> List[Dict[str, str]]:
                         crew_name = a.get_text(" ", strip=True)
                     break
 
-    return extract_shop_rows(soup, pirate_name, crew_name)
+    return extract_shop_rows(soup, pirate_name, crew_name, url)
 
 
 def run(ctx) -> Dict[str, Any]:
@@ -202,7 +282,19 @@ def run(ctx) -> Dict[str, Any]:
 
         time.sleep(SLEEP_SECONDS)
 
-    columns = ["Pirate Name", "Crew Name", "Shop Type", "Shop size", "Shop Name", "Location", "Ownership Role"]
+    columns = [
+        "Pirate Name",
+        "Crew Name",
+        "Shop Type",
+        "Shop size",
+        "Shop Name",
+        "Location",
+        "Display Shop",
+        "Ownership Role",
+        "Parse Status",
+        "Source URL",
+        "Shop Key",
+    ]
     shoppes_df = pd.DataFrame(all_rows, columns=columns)
     failures_df = pd.DataFrame(failures, columns=["Pirate URL", "Error Type", "Message"])
 
