@@ -387,8 +387,14 @@ def _append_history(df: pd.DataFrame, history_csv: str) -> None:
     df["Scraped At UTC"] = now.strftime("%Y-%m-%d %H:%M:%S")
 
     if out.exists():
-        old = pd.read_csv(out).fillna("")
-        combined = pd.concat([old, df], ignore_index=True, sort=False)
+        try:
+            old = pd.read_csv(out).fillna("")
+            combined = pd.concat([old, df], ignore_index=True, sort=False)
+        except pd.errors.EmptyDataError:
+            combined = df
+        except Exception as e:
+            print(f"⚠️ Could not read existing history file {history_csv}: {e}")
+            combined = df
     else:
         combined = df
 
@@ -455,7 +461,9 @@ def run(ctx=None) -> Dict[str, Any]:
             "Hearties List",
         ]
         other_cols = [c for c in pirates_df.columns if c not in first_cols]
-        pirates_df = pirates_df[[c for c in first_cols if c in pirates_df.columns] + sorted(other_cols)]
+        pirates_df = pirates_df[
+            [c for c in first_cols if c in pirates_df.columns] + sorted(other_cols)
+        ]
 
     _write_latest(pirates_df, OUTPUT_LATEST_CSV)
     _append_history(pirates_df, OUTPUT_HISTORY_CSV)
