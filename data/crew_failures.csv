@@ -1,1 +1,11 @@
 Crew URL,Error Type,Message
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5032685&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5019586&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5038022&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037720&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037992&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5031354&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037967&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037696&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037713&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037715&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"

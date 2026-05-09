@@ -1,1 +1,10 @@
 Crew URL,Error Type,Message
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037952&classic=$classic,ConnectionError,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037618&classic=$classic,ConnectionError,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5031812&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037976&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037992&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5031354&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037967&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037713&classic=$classic,ConnectionError,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037715&classic=$classic,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
