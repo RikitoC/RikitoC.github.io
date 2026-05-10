@@ -1,12 +1,50 @@
 Pirate URL,Error Type,Message
-https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Sunlessy,ConnectionError,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
-https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Royjones,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
-https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Rpwl,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
-https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Samsungssd,ConnectTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Max retries exceeded with url: /yoweb/pirate.wm?classic=false&target=Samsungssd (Caused by ConnectTimeoutError(<HTTPSConnection(host='emerald.puzzlepirates.com', port=443) at 0x7fc62ebcb890>, 'Connection to emerald.puzzlepirates.com timed out. (connect timeout=30)'))"
-https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Tangemw,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
-https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Tazwas,ReadTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Read timed out. (read timeout=30)"
-https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Toughmoughs,ConnectTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Max retries exceeded with url: /yoweb/pirate.wm?classic=false&target=Toughmoughs (Caused by ConnectTimeoutError(<HTTPSConnection(host='emerald.puzzlepirates.com', port=443) at 0x7fc62ec38b10>, 'Connection to emerald.puzzlepirates.com timed out. (connect timeout=30)'))"
-https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Tross,ConnectTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Max retries exceeded with url: /yoweb/pirate.wm?classic=false&target=Tross (Caused by ConnectTimeoutError(<HTTPSConnection(host='emerald.puzzlepirates.com', port=443) at 0x7fc62ef983d0>, 'Connection to emerald.puzzlepirates.com timed out. (connect timeout=30)'))"
-https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Tykegge,ConnectTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Max retries exceeded with url: /yoweb/pirate.wm?classic=false&target=Tykegge (Caused by ConnectTimeoutError(<HTTPSConnection(host='emerald.puzzlepirates.com', port=443) at 0x7fc62ef9aa10>, 'Connection to emerald.puzzlepirates.com timed out. (connect timeout=30)'))"
-https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Vriskaserket,ConnectTimeout,"HTTPSConnectionPool(host='emerald.puzzlepirates.com', port=443): Max retries exceeded with url: /yoweb/pirate.wm?classic=false&target=Vriskaserket (Caused by ConnectTimeoutError(<HTTPSConnection(host='emerald.puzzlepirates.com', port=443) at 0x7fc62ef9acd0>, 'Connection to emerald.puzzlepirates.com timed out. (connect timeout=30)'))"
-https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Magicbober,ConnectionError,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Bigtimerz,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Classless,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Gelatoisback,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Sxxygal,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Wraps,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Bighitter,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Komo,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Kou,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Lunara,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Prompto,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Sedirts,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Ledgers,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Muertax,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Reu,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Stumbler,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Whoznex,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Pottsalt,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Scruffysalt,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Snowstream,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Superhands,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Zenai,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Aprilsalt,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Bigboigu,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Cazdank,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Jamai,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Ljubica,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Topmast,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Alphashadow,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Athlena,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Emerlaus,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Fluffyrigz,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Fullgored,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Missura,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Rikitoc,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Dopemoney,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Sleepos,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Gaikokkheong,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Lovemimi,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Charlieb,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Idnyc,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Gingerbilly,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Wodobols,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Lazare,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Mariodela,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Moel,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Himawari,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Erza,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Bkierzy,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Muntean,ValueError,HTTP Error: 503
