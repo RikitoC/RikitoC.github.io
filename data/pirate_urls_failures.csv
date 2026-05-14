@@ -1,7 +1,1 @@
 Crew URL,Error Type,Message
-https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037658&classic=$classic,ValueError,HTTP Error: 503
-https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5031621&classic=$classic,ValueError,HTTP Error: 503
-https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037646&classic=$classic,ValueError,HTTP Error: 503
-https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5013022&classic=$classic,ValueError,HTTP Error: 503
-https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037967&classic=$classic,ValueError,HTTP Error: 503
-https://emerald.puzzlepirates.com/yoweb/crew/info.wm?crewid=5037976&classic=$classic,ValueError,HTTP Error: 503
