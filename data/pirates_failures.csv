@@ -1,1 +1,5 @@
 Pirate URL,Error Type,Message
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Witchinside,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Dreadmoor,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Thecoyote,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Glubbotion,ValueError,HTTP Error: 503
