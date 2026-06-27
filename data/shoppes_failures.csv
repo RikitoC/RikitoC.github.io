@@ -1,1 +1,6 @@
 Pirate URL,Error Type,Message
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Noojee,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Puzzlepiff,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Waznarre,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Bigaburrito,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Hamburg,ValueError,HTTP Error: 503
