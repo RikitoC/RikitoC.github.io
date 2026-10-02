@@ -1,1 +1,4 @@
 Pirate URL,Error Type,Message
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Barebear,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Geofvh,ValueError,HTTP Error: 503
+https://emerald.puzzlepirates.com/yoweb/pirate.wm?classic=false&target=Kindermaxi,ValueError,HTTP Error: 503
